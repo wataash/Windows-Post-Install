@@ -41,7 +41,7 @@ function Backup-Directory
 	)
 	
 	<#
-	なぜかstring[]のデフォルトパラメータがVS2015のLocalsで[]になる。Watch、QuickWatchでも同様。
+	なぜかstring[]のパラメータはVS2015のLocalsで[]になる。Watch、QuickWatchでも同様。
 	echoするとちゃんと定義されている。
 	echo $BackupDirectoriesAbs
 	別の変数に代入しても同様。
@@ -63,7 +63,7 @@ function Backup-Directory
 
 	# foreach中のitemはLocalsに出る。
 	foreach($d in $BackupDirectoriesAbs){
-		$to = $BackupTo + $d.TrimStart('C:\')
+		$to = $BackupTo + '/' + $d.TrimStart('C:\')
 		$LogPath = Remove-InvalidFileNameChars($d)
 		$LogPath = $($HOME + '/Documents/robocopy_' + $LogPath + '.log')
 		# R:0 skip locked resource. Check log.
@@ -95,31 +95,20 @@ function Backup-File
 	
 	$BackupFilesAbs = @()
 	
-	$BackupFilesAbs += $FilesOnHome | % {$HOME + '/' + $_}
+	$BackupFilesAbs += $FilesOnHome | % {$HOME + '\' + $_}
 
 	foreach($f in $BackupFilesAbs){
 		# ↓これが原因でワイルドカード使えない
 		$to = $BackupTo + '/' + $f.TrimStart('C:\')
-		# TODO: ロックされていても大丈夫？動作未確認。$toのディレクトリが無いとエラーになる。
-		Copy-Item -Path $f -Destination $to -Force -Recurse -Verbose
+		
+		# http://stackoverflow.com/questions/7523497/should-copy-item-create-the-destination-directory-structure
+		New-Item -ItemType File -Path $to -Force -Verbose
+		
+		# TODO: ロックされていても大丈夫？
+		Copy-Item -Path $f -Destination $to -Force -Verbose
 	}
 }
 
-Backup-File -BackupTo $($HOME + '/Documents/tmp') `
-	-FilesOnHome @(
-		'not exist file'
-		'.bash_history'
-		'.gitconfig'
-		'.kdiff3rc'
-		'.python_history'
-		'contestapplet.conf'
-		'Untitled.ipynb'  # temporary
-		'Untitled1.ipynb'  # temporary
-		'Untitled2.ipynb'  # temporary
-		'Untitled3.ipynb'  # temporary
-		'Appdata/Roaming/ConEmu.xml'  # TODO: できる？これでConEmu復元？
-)
-exit
 
 function Get-InstalledSoftwares
 {
@@ -153,29 +142,44 @@ function Get-InstalledSoftwares
 #}
 
 
-exit
 
-Backup-Directory `
-	-BackupTo $($HOME + '/Documents/tmp/') `
-	-BackupDirectoriesAbs @(
-		'!*?fasInvalid directory name'  # コメント書いてもOK
-		'C:\NotExistDirectoryName'
-		'C:\Sandbox'
-		'C:\tools\cygwin\home'
-	) `
-	-BackupDirectoriesOnHome @(
-		'.gnucash'
-		'Desktop'
-		'Documents'
-		'Downloads'
-		'Dropbox'  # オプション
-		'Music'
-		'Pictures'
-		'Videos'
-		# https://productforums.google.com/forum/#!topic/ime-ja/ut-s3UFrO88
-		'appdata\LocalLow\Google\Google Japanese Input'
-	) `
-	-BackupDirectoriesOnAppdata @(
+$BackupFilesOnHome = @(
+	'not exist file'
+	'.bash_history'
+	'.gitconfig'
+	'.kdiff3rc'
+	'.python_history'
+	'contestapplet.conf'
+	'Untitled.ipynb'  # temporary
+	'Untitled1.ipynb'  # temporary
+	'Untitled2.ipynb'  # temporary
+	'Appdata/Roaming/ConEmu.xml'  # TODO: これでConEmu復元？
+)
+
+#Backup-File `
+#	-BackupTo 'D:/2015-11-13_UX31E' -FilesOnHome $BackupFilesOnHome
+#exit
+
+
+$BackupDirectoriesAbs = @(
+	'!*?fasInvalid directory name'
+	'C:\NotExistDirectoryName'
+	'C:\Sandbox'
+	'C:\tools\cygwin\home'
+)
+$BackupDirectoriesOnHome = @(
+	'.gnucash'
+	'Desktop'
+	'Documents'
+	'Downloads'
+	'Dropbox'  # オプション
+	'Music'
+	'Pictures'
+	'Videos'
+	# https://productforums.google.com/forum/#!topic/ime-ja/ut-s3UFrO88
+	'appdata\LocalLow\Google\Google Japanese Input'
+)
+$BackupDirectoriesOnAppdata = @(
 	'aacs',
 	'Dropbox',
 	'dvdcss',
@@ -190,3 +194,11 @@ Backup-Directory `
 	'Thunderbird',
 	'VirtuaWin'
 )
+
+Backup-Directory `
+	-BackupTo 'D:/2015-11-13_UX31E' `
+	-BackupDirectoriesAbs $BackupDirectoriesAbs `
+	-BackupDirectoriesOnHome $BackupDirectoriesOnHome `
+	-BackupDirectoriesOnAppdata $BackupDirectoriesOnAppdata
+
+exit
