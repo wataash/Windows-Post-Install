@@ -56,7 +56,7 @@ function Backup-Directory
 		)
 	#>
 
-	$BackupDirectoriesAbs += $DirectoriesOnHome | % {$HOME + '/' + $_}
+	$BackupDirectoriesAbs += $BackupDirectoriesOnHome | % {$HOME + '/' + $_}
 
 	$BackupDirectoriesAbs +=
 		$BackupDirectoriesOnAppdata | % {$ENV:APPDATA + '/' + $_}
