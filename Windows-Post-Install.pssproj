@@ -29,6 +29,7 @@
   <ItemGroup />
   <ItemGroup>
     <Compile Include="Backup-Data.ps1" />
+    <Compile Include="Configurations.psm1" />
     <Compile Include="Post-Install.ps1" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

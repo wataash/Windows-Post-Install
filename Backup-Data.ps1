@@ -2,6 +2,12 @@
 # Backup-Data.ps1
 #
 
+# -Force: to clear cache
+# http://tech.guitarrapc.com/entry/2013/12/03/014013
+# -> 5. モジュールの破棄と再読み込み
+# -> 一度モジュールを読み込んだセッションでモジュールファイルを変更して読み込み直す
+Import-Module $PSScriptRoot/Configurations.psm1 -PassThru -Verbose -Force
+
 
 # http://stackoverflow.com/questions/23066783/how-to-strip-illegal-characters-before-trying-to-save-filenames
 Function Remove-InvalidFileNameChars {
@@ -31,21 +37,15 @@ function Backup-Directory
 		[string]$BackupTo,
 
 		[parameter()]
-		[string[]]$BackupDirectoriesAbs,
-
-		[parameter()]
-		[string[]]$BackupDirectoriesOnHome,
-
-		[parameter()]
-		[string[]]$BackupDirectoriesOnAppdata
+		[string[]]$Paths
 	)
 	
 	<#
 	なぜかstring[]のパラメータはVS2015のLocalsで[]になる。Watch、QuickWatchでも同様。
 	echoするとちゃんと定義されている。
-	echo $BackupDirectoriesAbs
+	echo $Paths
 	別の変数に代入しても同様。
-	$a = $BackupDirectoriesAbs
+	$a = $Paths
 	echo $a
 	新たに定義するとLocalsに出る。
 	$a = @("a", "b")
@@ -56,16 +56,13 @@ function Backup-Directory
 		)
 	#>
 
-	$BackupDirectoriesAbs += $BackupDirectoriesOnHome | % {$HOME + '/' + $_}
-
-	$BackupDirectoriesAbs +=
-		$BackupDirectoriesOnAppdata | % {$ENV:APPDATA + '/' + $_}
+	New-Item -ItemType Directory $HOME/Documents/Windows-Post-Install_log/
 
 	# foreach中のitemはLocalsに出る。
-	foreach($d in $BackupDirectoriesAbs){
+	foreach($d in $Paths){
 		$to = $BackupTo + '/' + $d.TrimStart('C:\')
 		$LogPath = Remove-InvalidFileNameChars($d)
-		$LogPath = $($HOME + '/Documents/robocopy_' + $LogPath + '.log')
+		$LogPath = $($HOME + '/Documents/Windows-Post-Install_log/robocopy_' + $LogPath + '.log')
 		# R:0 skip locked resource. Check log.
 		ROBOCOPY $d $to /MIR /R:0 > $LogPath
 		If ($?) {
@@ -90,14 +87,10 @@ function Backup-File
 		[string]$BackupTo,
 
 		[parameter()]
-		[string[]]$FilesOnHome
+		[string[]]$Paths
 	)
-	
-	$BackupFilesAbs = @()
-	
-	$BackupFilesAbs += $FilesOnHome | % {$HOME + '\' + $_}
 
-	foreach($f in $BackupFilesAbs){
+	foreach($f in $Paths){
 		# ↓これが原因でワイルドカード使えない
 		$to = $BackupTo + '/' + $f.TrimStart('C:\')
 		
@@ -143,64 +136,5 @@ function Get-InstalledSoftwares
 
 
 
-$BackupFilesOnHome = @(
-	'not exist file'
-	'.bash_history'
-	'.gitconfig'
-	'.kdiff3rc'
-	'.python_history'
-	'contestapplet.conf'
-	'Untitled.ipynb'  # temporary
-	'Untitled1.ipynb'  # temporary
-	'Untitled2.ipynb'  # temporary
-	'Appdata/Roaming/ConEmu.xml'  # TODO: これでConEmu復元？
-)
-
-#Backup-File `
-#	-BackupTo 'D:/2015-11-13_UX31E' -FilesOnHome $BackupFilesOnHome
-#exit
-
-
-$BackupDirectoriesAbs = @(
-	'!*?fasInvalid directory name'
-	'C:\NotExistDirectoryName'
-	'C:\Sandbox'
-	'C:\tools\cygwin\home'
-)
-$BackupDirectoriesOnHome = @(
-	'.gnucash'
-	'Desktop'
-	'Documents'
-	'Downloads'
-	'Dropbox'  # オプション
-	'Music'
-	'Pictures'
-	'Videos'
-	# https://productforums.google.com/forum/#!topic/ime-ja/ut-s3UFrO88
-	'appdata\LocalLow\Google\Google Japanese Input'
-)
-$BackupDirectoriesOnAppdata = @(
-	'aacs',
-	'Dropbox',
-	'dvdcss',
-	'GitExtensions',
-	'Greenshot',
-	'JetBrains',
-	'Microsoft\Windows\Start Menu\Programs\Startup'
-	'Microsoft\Windows\SendTo'
-	'Mozilla',
-	'MySQL/Workbench',
-	'StrokesPlus',
-	# http://mgzl.jp/2014/10/28/sync-sublime-text-3-over-dropbox/
-	'Sublime Text 3',
-	'Thunderbird',
-	'VirtuaWin'
-)
-
-Backup-Directory `
-	-BackupTo 'D:/2015-11-13_UX31E' `
-	-BackupDirectoriesAbs $BackupDirectoriesAbs `
-	-BackupDirectoriesOnHome $BackupDirectoriesOnHome `
-	-BackupDirectoriesOnAppdata $BackupDirectoriesOnAppdata
-
-exit
+Backup-File -BackupTo $BackupTo -Paths $BackupFilePaths
+Backup-Directory -BackupTo $BackupTo -Paths $BackupDirectoryPaths
