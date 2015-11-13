@@ -2,53 +2,42 @@
 # Backup-Data.ps1
 #
 
+
+# http://stackoverflow.com/questions/23066783/how-to-strip-illegal-characters-before-trying-to-save-filenames
+Function Remove-InvalidFileNameChars {
+  param(
+    [Parameter(Mandatory=$true,
+      Position=0,
+      ValueFromPipeline=$true,
+      ValueFromPipelineByPropertyName=$true)]
+    [String]$Name
+  )
+
+  $invalidChars = [IO.Path]::GetInvalidFileNameChars() -join ''
+  $re = "[{0}]" -f [RegEx]::Escape($invalidChars)
+  return ($Name -replace $re)
+}
+
+
 function Backup-Directory
 {
 	<#
 	.DESCRIPTION
-	TODO: 下の Restore Data の書き方まねる。
-	# newuser
-	# home, mozzila
+	memo All user home, mozzila
 	#>
 	[CmdletBinding()]
 	param (
 		[parameter()]
-		[string]$BackupTo = 'D:\2015-10-06_optiplex9600',
+		[string]$BackupTo,
 
 		[parameter()]
-		[string[]]$BackupDirectoriesAbs =
-			@(
-				'C:\Sandbox',
-				'C:\tools\cygwin\home'
-			),
+		[string[]]$BackupDirectoriesAbs,
 
 		[parameter()]
-		[string[]]$BackupDirectoriesOnHome =
-			@(
-				'Desktop',
-				'Documents',
-				'Downloads',
-				'Dropbox',
-				'Music',
-				'Pictures',
-				'Videos',
-				# https://productforums.google.com/forum/#!topic/ime-ja/ut-s3UFrO88
-				'appdata\LocalLow\Google\Google Japanese Input'
-			),
+		[string[]]$BackupDirectoriesOnHome,
 
 		[parameter()]
-		[string[]]$BackupDirectoriesOnAppdata =
-			@(
-				'aacs',
-				'Dropbox',
-				'dvdcss',
-				'Mozilla',
-				'StrokesPlus',
-				# http://mgzl.jp/2014/10/28/sync-sublime-text-3-over-dropbox/
-				'Sublime Text 3',
-				'Thunderbird',
-				'VirtuaWin'
-			)
+		[string[]]$BackupDirectoriesOnAppdata
 	)
 	
 	<#
@@ -67,32 +56,70 @@ function Backup-Directory
 		)
 	#>
 
-	$BackupDirectoriesAbs +=
-		$DirectoriesOnHome |
-		% {$HOME + '/' + $_}
+	$BackupDirectoriesAbs += $DirectoriesOnHome | % {$HOME + '/' + $_}
 
 	$BackupDirectoriesAbs +=
-		$BackupDirectoriesOnAppdata |
-		% {$ENV:APPDATA + '/' + $_}
+		$BackupDirectoriesOnAppdata | % {$ENV:APPDATA + '/' + $_}
 
 	# foreach中のitemはLocalsに出る。
 	foreach($d in $BackupDirectoriesAbs){
-		$to = $HOME + '/Documents/tmp/' + $d.TrimStart('C:\')
+		$to = $BackupTo + $d.TrimStart('C:\')
+		$LogPath = Remove-InvalidFileNameChars($d)
+		$LogPath = $($HOME + '/Documents/robocopy_' + $LogPath + '.log')
 		# R:0 skip locked resource. Check log.
-		ROBOCOPY $d $to /MIR /R:0 > $($HOME + '/Documents/robocopy.log')
+		ROBOCOPY $d $to /MIR /R:0 > $LogPath
+		If ($?) {
+			Write-Output $('ROBOCOPYied ' + $d)
+		}
+		Else {
+			Write-Output $('Failed to ROBOCOPY ' + $d)
+		}
 	}
 } 
 
 
 function Backup-File
 {
-	$copy_files_home = @('.gitconfig', 'contestapplet.conf')
-	foreach($f in $copy_files_home){
-		Copy-Item -Path $($HOME + '\' + $f) `
-		-Destination $BackupTo -Force -Recurse -Verbose
+	<#
+	.DESCRIPTION
+	ファイルを指定してバックアップ。
+	#>
+	[CmdletBinding()]
+	param (
+		[parameter()]
+		[string]$BackupTo,
+
+		[parameter()]
+		[string[]]$FilesOnHome
+	)
+	
+	$BackupFilesAbs = @()
+	
+	$BackupFilesAbs += $FilesOnHome | % {$HOME + '/' + $_}
+
+	foreach($f in $BackupFilesAbs){
+		# ↓これが原因でワイルドカード使えない
+		$to = $BackupTo + '/' + $f.TrimStart('C:\')
+		# TODO: ロックされていても大丈夫？動作未確認。$toのディレクトリが無いとエラーになる。
+		Copy-Item -Path $f -Destination $to -Force -Recurse -Verbose
 	}
 }
 
+Backup-File -BackupTo $($HOME + '/Documents/tmp') `
+	-FilesOnHome @(
+		'not exist file'
+		'.bash_history'
+		'.gitconfig'
+		'.kdiff3rc'
+		'.python_history'
+		'contestapplet.conf'
+		'Untitled.ipynb'  # temporary
+		'Untitled1.ipynb'  # temporary
+		'Untitled2.ipynb'  # temporary
+		'Untitled3.ipynb'  # temporary
+		'Appdata/Roaming/ConEmu.xml'  # TODO: できる？これでConEmu復元？
+)
+exit
 
 function Get-InstalledSoftwares
 {
@@ -101,29 +128,65 @@ function Get-InstalledSoftwares
 }
 
 
-function Backup-EntireHomeDirectory
-{
-	<#
-	.DESCRIPTION
-	ホームディレクトリ丸ごとバックアップ。くそ時間かかるのでボツ。動作確認してない。
-	#>
-	[CmdletBinding()]
-	param (
-		[parameter()]
-		[string]$BackupTo = 'D:\2015-10-06_optiplex9600/wsh'
-	)
+#function Backup-EntireHomeDirectory
+#{
+#	<#
+#	.DESCRIPTION
+#	ホームディレクトリ丸ごとバックアップ。くそ時間かかるのでボツ。動作確認してない。
+#	#>
+#	[CmdletBinding()]
+#	param (
+#		[parameter()]
+#		[string]$BackupTo = 'D:\2015-10-06_optiplex9600/wsh'
+#	)
 
-	# TODO: xclude appdata/Local/[Packages,Temp]
-	# TODO: exclude directory できてない？
-	ROBOCOPY $HOME $BackupTo `
-		/XD $($HOME + '.android') `
-		$($HOME + '/.PyCharm40') `
-		$($HOME + '/Anaconda')`
-		$($HOME + '/Anaconda3')`
-		$($HOME + '/Miniconda3') `
-	    # R:0 skip locked resource. Check log.
-		/MIR /R:0 > $($HOME + '/robocopy.log')
-}
+#	# TODO: xclude appdata/Local/[Packages,Temp]
+#	# TODO: exclude directory できてない？
+#	ROBOCOPY $HOME $BackupTo `
+#		/XD $($HOME + '.android') `
+#		$($HOME + '/.PyCharm40') `
+#		$($HOME + '/Anaconda')`
+#		$($HOME + '/Anaconda3')`
+#		$($HOME + '/Miniconda3') `
+#	    # R:0 skip locked resource. Check log.
+#		/MIR /R:0 > $($HOME + '/robocopy.log')
+#}
 
-Backup-Directory
 
+exit
+
+Backup-Directory `
+	-BackupTo $($HOME + '/Documents/tmp/') `
+	-BackupDirectoriesAbs @(
+		'!*?fasInvalid directory name'  # コメント書いてもOK
+		'C:\NotExistDirectoryName'
+		'C:\Sandbox'
+		'C:\tools\cygwin\home'
+	) `
+	-BackupDirectoriesOnHome @(
+		'.gnucash'
+		'Desktop'
+		'Documents'
+		'Downloads'
+		'Dropbox'  # オプション
+		'Music'
+		'Pictures'
+		'Videos'
+		# https://productforums.google.com/forum/#!topic/ime-ja/ut-s3UFrO88
+		'appdata\LocalLow\Google\Google Japanese Input'
+	) `
+	-BackupDirectoriesOnAppdata @(
+	'aacs',
+	'Dropbox',
+	'dvdcss',
+	'GitExtensions',
+	'Greenshot',
+	'JetBrains',
+	'Mozilla',
+	'MySQL/Workbench',
+	'StrokesPlus',
+	# http://mgzl.jp/2014/10/28/sync-sublime-text-3-over-dropbox/
+	'Sublime Text 3',
+	'Thunderbird',
+	'VirtuaWin'
+)
