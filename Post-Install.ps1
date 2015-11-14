@@ -52,6 +52,7 @@ Function Set-InitialConfiguration
     Change the computer name.
     Restart after execute Set-Tweaks.
     githubからこのrepoをzipで落とす。ISEにこのファイルをドラッグして開いて実行。
+    or PSの方がハイライトがあって見やすい。
     #>
 }
 
