@@ -121,10 +121,10 @@ Function Restore-Data
             # R:0 skip locked resource. Check log.
             ROBOCOPY $src $dp /MIR /R:0 > $LogPath
             If ($?) {
-                Write-Output $('ROBOCOPYied ' + $d)
+                Write-Output $('ROBOCOPYied ' + $dp)
             }
             Else {
-                Write-Output $('Failed to ROBOCOPY ' + $d)
+                Write-Output $('Failed to ROBOCOPY ' + $dp)
             }
         }
     }
