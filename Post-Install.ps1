@@ -18,10 +18,9 @@ apt-cyg install ip openssh autossh rsync zsh
 
 
 Windows 10 セットアップ画面で全パーティション消去、unallocated spaceにインストール
-ASUS：左のUSBポートだとエラー（ we couldn't wait create a partition…）、右だといけた
+ASUS：左のUSBポートだとエラー (we couldn't wait create a partition...)
+      右だといけた
 ブートの優先順位が関係してる？MBRを書き込むデバイスが変わるから？
-
-
 #>
 
 
@@ -34,7 +33,10 @@ Function Set-InitialConfiguration
 {
     # 手動でやる。スクリプト化する気無し。
     throw [System.NotImplementedException]
-    Set-ExecutionPolicy RemoteSigned # press y. Run as admin.
+
+    # まずadmin ps上で
+    Set-ExecutionPolicy Unrestricted
+    # を実行してpress y。
 
     <#
     BitLocker ON。
@@ -49,6 +51,7 @@ Function Set-InitialConfiguration
 
     Change the computer name.
     Restart after execute Set-Tweaks.
+    githubからこのrepoをzipで落とす。ISEにこのファイルをドラッグして開いて実行。
     #>
 }
 
@@ -141,51 +144,68 @@ function Install-App
 {
     <#
     TODO: リファクター
-    google japanese inputなどはインストール後に設定ファイルがロックされてしまうので、インストール前に
-    Set-AppConfigrationしたい。今のところRestore-Dataがこの役割を担っている。
-    なのでコンピュータ間非同期。
+    google japanese inputなどはインストール後に設定ファイルがロックされてしまうので、
+    インストール前にSet-AppConfigrationしたい。
+    今のところRestore-Dataがこの役割を担っている。なのでコンピュータ間非同期。
+    Sometimes restarts while the process due to windows update.
     #>
 
     # Chocolatey
     # run ps with admin privilege
-    iex ((new-object net.webclient).DownloadString('https://chocolatey.org/install.ps1'))
-    # Sometimes restarts while the process due to windows update
+    iex ((new-object net.webclient).
+        DownloadString('https://chocolatey.org/install.ps1'))
+    
     # sort http://www.online-utility.org/text/sort.jsp
-    # 2015/10/17 poshgit できてない？
-    choco install -y adobereader altdrag autohotkey_l conemu cyg-get cygwin dropbox firefox git gitextensions google-chrome-x64 googlejapaneseinput greenshot kdiff3 linkshellextension pdfcreator picasa scite4autohotkey sourcetree SublimeText3 sudo thunderbird vlc
-    choco install -y eclipse filezilla jdk8 ruby skype sqlite sumatrapdf tortoisegit vmwareplayer winmerge winscp wireshark
-    choco install -y Console2 fiddler4 lessmsi mysql.workbench poshgit procexp
-    # not install
-    # 7zip.install autohotkey atom boxstarter ccleaner ditto easybcd flashplayeractivex gnucash golang hg inkscape javaruntime libreoffice mousewithoutborders paint.net pscx puppet putty pycharm resharper tor-browser virtualbox virtuawin youtube-dl nodejs.install keepass docker # 2015/08/19 failed resharper, "7zip.install"でなく"7zip"だとインストールされてないように見える（どこのディレクトリにあるか分からなかった）
+   
+    # 必須
+    choco install -y 7zip.install adobereader altdrag autohotkey_l conemu cygwin dropbox firefox git gitextensions google-chrome-x64 googlejapaneseinput kdiff3 linkshellextension pdfcreator picasa scite4autohotkey sourcetree SublimeText3 sudo thunderbird vlc
+    # 試す
+    # choco install -y Console2 fiddler4 lessmsi procexp tortoisegit
+    # HDDに余裕あればインストール
+    # choco install -y ditto filezilla wireshark
+    
+    <#
+    not install
+    2015/08/19 failed resharper
+    "7zip.install"でなく"7zip"だとインストールされてないように見える
+    （どこのディレクトリにあるか分からなかった）
+    2015/10/17 poshgit できてない？
+    atom autohotkey boxstarter ccleaner cyg-get docker easybcd eclipse flashplayeractivex gnucash golang hg inkscape javaruntime jdk8 keepass libreoffice mousewithoutborders mysql.workbench nodejs.install paint.net poshgit pscx puppet putty pycharm resharper ruby skype sqlite sumatrapdf tor-browser virtualbox virtuawin vmwareplayer winmerge winscp youtube-dl
+    #>
 
-    # Not in chocolatey
-    # mendeley https://www.mendeley.com/download-mendeley-desktop/
-        # Uncheck "Automatically mark documet as read", organize my Files, Rename document files
-    # xvid https://www.xvid.com/download/
-    # RealVnc https://www.realvnc.com/download/get/1710/
-    # StrokesPlus http://www.strokesplus.com/downloads/
-    # swish http://www.swish-sftp.org/
-    # camstudio http://camstudio.org/
-    # callnote synergy tincam CPU モニター
-    # Python
-    # http://conda.pydata.org/miniconda.html
-        # 2 x86をhome/Miniconda_x86にインストール
-        # 3 x86をhome/Miniconda3_x86にインストール・「デフォルト 3.4」チェックを外す
-        # Miniconda x64 3.4をhome/Miniconda3にインストール
-            # 最後に入れたものが環境変数の先頭に来ると思われる
+    <#
+    Not in chocolatey
+    TODO mysql autocad
+    mendeley https://www.mendeley.com/download-mendeley-desktop/
+        Uncheck "Automatically mark documet as read",
+        organize my Files, Rename document files
+    xvid https://www.xvid.com/download/
+    RealVnc https://www.realvnc.com/download/get/1710/
+    StrokesPlus http://www.strokesplus.com/downloads/
+    swish http://www.swish-sftp.org/
+    camstudio http://camstudio.org/
+    callnote synergy tincam CPU モニター
+    Python
+    http://conda.pydata.org/miniconda.html
+        2 x86をhome/Miniconda_x86にインストール
+        3 x86をhome/Miniconda3_x86にインストール・「デフォルト 3.4」チェックを外す
+        Miniconda x64 3.4をhome/Miniconda3にインストール
+            最後に入れたものが環境変数の先頭に来ると思われる
     conda install -y ipython-notebook matplotlib
-        # Miniconda3 x64にのみインストールされるっぽい
+        Miniconda3 x64にのみインストールされるっぽい
     pip install pyvisa
-        # Miniconda3 x64のみか？
-    # Heavy
-    # Visual studio https://www.visualstudio.com/ja-jp/downloads/download-visual-studio-vs.aspx
-        # PTVS intellisense
-    # autocad
-    # Sandboxie http://www.sandboxie.com/index.php?DownloadSandboxie
-        # default box -> block internet
-    # Mathematica
-    # rewrite: ver 10
-    # &( $( $HOME+ '\Documents\apps\apps_utokyo_lab\ver901_lab\ver901_lab\Mathematica_9.0.1_Japanese_WIN_LabVersion.exe' )) /norestart /silent | Out-Null
+        Miniconda3 x64のみか？
+    Heavy
+    Visual studio https://www.visualstudio.com/ja-jp/downloads/downloadvisualstudio-vs.aspx
+      PTVS intellisense
+    autocad
+    Sandboxie http://www.sandboxie.com/index.php?DownloadSandboxie
+      default box -> block internet
+    Mathematica
+    rewrite: ver 10
+    &( $( $HOME+ '\Documents\apps\apps_utokyo_lab\ver901_lab\ver901_l\Mathematica_9.0.1_Japanese_WIN_LabVersion.exe' )) /norestart /silent |
+       Out-Null
+    #>
 }
 
 
@@ -216,7 +236,8 @@ Function Set-Startup
     # Startup
     # wolud work only for 64 bit
     $shell = New-Object -ComObject WScript.Shell
-    $startup = $( $env:appdata + '\Microsoft\Windows\Start Menu\Programs\Startup')
+    $startup = `
+        $( $env:appdata + '\Microsoft\Windows\Start Menu\Programs\Startup')
 
     $shortcut = $shell.CreateShortcut("$startup\AltDrag.lnk")
     $shortcut.TargetPath = 'C:\Program Files (x86)\AltDrag\AltDrag.exe'
