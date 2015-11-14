@@ -7,24 +7,11 @@
 # -> 5. モジュールの破棄と再読み込み
 # -> 一度モジュールを読み込んだセッションでモジュールファイルを変更して読み込み直す
 Import-Module $PSScriptRoot/Configurations.psm1 -PassThru -Verbose -Force
+Import-Module $PSScriptRoot/Remove-InvalidFileNameChars.psm1 `
+    -PassThru -Verbose -Force
 
 
-# http://stackoverflow.com/questions/23066783/how-to-strip-illegal-characters-before-trying-to-save-filenames
-Function Remove-InvalidFileNameChars {
-  param(
-    [Parameter(Mandatory=$true,
-      Position=0,
-      ValueFromPipeline=$true,
-      ValueFromPipelineByPropertyName=$true)]
-    [String]$Name
-  )
-
-  $invalidChars = [IO.Path]::GetInvalidFileNameChars() -join ''
-  $re = "[{0}]" -f [RegEx]::Escape($invalidChars)
-  return ($Name -replace $re)
-}
-
-
+# TODO: Post-Install.ps1のように Backup-Directory と Backup-File をまとめる
 function Backup-Directory
 {
 	<#
@@ -34,7 +21,7 @@ function Backup-Directory
 	[CmdletBinding()]
 	param (
 		[parameter()]
-		[string]$BackupTo,
+		[string]$BackupRoot,
 
 		[parameter()]
 		[string[]]$Paths
@@ -60,7 +47,7 @@ function Backup-Directory
 
 	# foreach中のitemはLocalsに出る。
 	foreach($d in $Paths){
-		$to = $BackupTo + '/' + $d.TrimStart('C:\')
+		$to = $BackupRoot + '/' + $d.TrimStart('C:\')
 		$LogPath = Remove-InvalidFileNameChars($d)
 		$LogPath = $($HOME + '/Documents/Windows-Post-Install_log/robocopy_' + $LogPath + '.log')
 		# R:0 skip locked resource. Check log.
@@ -84,7 +71,7 @@ function Backup-File
 	[CmdletBinding()]
 	param (
 		[parameter()]
-		[string]$BackupTo,
+		[string]$BackupRoot,
 
 		[parameter()]
 		[string[]]$Paths
@@ -92,7 +79,7 @@ function Backup-File
 
 	foreach($f in $Paths){
 		# ↓これが原因でワイルドカード使えない
-		$to = $BackupTo + '/' + $f.TrimStart('C:\')
+		$to = $BackupRoot + '/' + $f.TrimStart('C:\')
 		
 		# http://stackoverflow.com/questions/7523497/should-copy-item-create-the-destination-directory-structure
 		New-Item -ItemType File -Path $to -Force -Verbose
@@ -119,12 +106,12 @@ function Get-InstalledSoftwares
 #	[CmdletBinding()]
 #	param (
 #		[parameter()]
-#		[string]$BackupTo = 'D:\2015-10-06_optiplex9600/wsh'
+#		[string]$BackupRoot = 'D:\2015-10-06_optiplex9600/wsh'
 #	)
 
 #	# TODO: xclude appdata/Local/[Packages,Temp]
 #	# TODO: exclude directory できてない？
-#	ROBOCOPY $HOME $BackupTo `
+#	ROBOCOPY $HOME $BackupRoot `
 #		/XD $($HOME + '.android') `
 #		$($HOME + '/.PyCharm40') `
 #		$($HOME + '/Anaconda')`
@@ -135,6 +122,5 @@ function Get-InstalledSoftwares
 #}
 
 
-
-Backup-File -BackupTo $BackupTo -Paths $BackupFilePaths
-Backup-Directory -BackupTo $BackupTo -Paths $BackupDirectoryPaths
+Backup-File -BackupRoot $BackupRoot -Paths $BackupFilePaths
+Backup-Directory -BackupRoot $BackupRoot -Paths $BackupDirectoryPaths

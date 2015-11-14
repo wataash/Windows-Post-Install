@@ -2,7 +2,7 @@
 # Configurations.psm1
 #
 
-$BackupTo = 'D:/2015-11-13_UX31E'
+$BackupRoot = 'D:/2015-11-13_UX31E'
 
 $BackupFilePaths = @()
 $BackupFilePaths += @(
