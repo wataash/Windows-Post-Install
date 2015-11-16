@@ -186,17 +186,15 @@ function Install-App
     swish http://www.swish-sftp.org/
     camstudio http://camstudio.org/
     callnote synergy tincam CPU モニター
-    Python
-    http://conda.pydata.org/miniconda.html
-        2 x86をhome/Miniconda_x86にインストール
-        3 x86をhome/Miniconda3_x86にインストール・「デフォルト 3.4」チェックを外す
-        Miniconda x64 3.4をhome/Miniconda3にインストール
-            最後に入れたものが環境変数の先頭に来ると思われる
-    conda install -y ipython-notebook matplotlib
-        Miniconda3 x64にのみインストールされるっぽい
-    pip install pyvisa
-        Miniconda3 x64のみか？
+    
     Heavy
+    
+    Python (miniconda x64 3.5)
+    http://conda.pydata.org/miniconda.html
+    # TODO migrate
+    conda install -y ipython-notebook matplotlib numpy django
+    pip install pyvisa
+    
     Visual studio https://www.visualstudio.com/ja-jp/downloads/downloadvisualstudio-vs.aspx
       PTVS intellisense
     autocad
