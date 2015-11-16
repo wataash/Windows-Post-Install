@@ -16,7 +16,7 @@ $BackupFilePaths += @(
 	'Untitled.ipynb'  # temporary
 	'Untitled1.ipynb'  # temporary
 	'Untitled2.ipynb'  # temporary
-	'Appdata/Roaming/ConEmu.xml'  # TODO: ‚±‚ê‚ÅConEmu•œŒ³H
+	'Appdata/Roaming/ConEmu.xml'  # TODO: ã“ã‚Œã§ConEmuå¾©å…ƒï¼Ÿ
 ) | % {$HOME + '\' + $_}
 
 
@@ -24,6 +24,7 @@ $BackupDirectoryPaths = @(
 	'!*?fasInvalid directory name'
 	'C:\NotExistDirectoryName'
 	'C:\Sandbox'
+	# 2015/11/16 C:/cygwin64/home ãŒcygwin rootã«ãªã£ãŸ
 	'C:\tools\cygwin\home'
 )
 $BackupDirectoryPaths += @(
@@ -32,7 +33,7 @@ $BackupDirectoryPaths += @(
 	'Desktop'
 	'Documents'
 	'Downloads'
-	'Dropbox'  # ƒIƒvƒVƒ‡ƒ“
+	'Dropbox'  # ã‚ªãƒ—ã‚·ãƒ§ãƒ³
 	'Music'
 	'Pictures'
 	'Videos'
