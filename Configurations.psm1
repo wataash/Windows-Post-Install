@@ -1,8 +1,8 @@
-#
+﻿#
 # Configurations.psm1
 #
 
-$BackupRoot = 'D:/2015-11-13_UX31E'
+$BackupRoot = 'D:/2015-11-18_edge14'
 
 $BackupFilePaths = @()
 $BackupFilePaths += @(
@@ -16,7 +16,7 @@ $BackupFilePaths += @(
 	'Untitled.ipynb'  # temporary
 	'Untitled1.ipynb'  # temporary
 	'Untitled2.ipynb'  # temporary
-	'Appdata/Roaming/ConEmu.xml'  # TODO: これでConEmu復元？
+	'Appdata/Roaming/ConEmu.xml'
 ) | % {$HOME + '\' + $_}
 
 
@@ -30,6 +30,7 @@ $BackupDirectoryPaths = @(
 $BackupDirectoryPaths += @(
 	# on home directory
 	'.gnucash'
+	'.PyCharm50'
 	'Desktop'
 	'Documents'
 	'Downloads'
@@ -42,21 +43,31 @@ $BackupDirectoryPaths += @(
 ) | % {$HOME + '/' + $_}
 $BackupDirectoryPaths += @(
 	# on %APPDATA%
-	'aacs',
-	'Dropbox',
-	'dvdcss',
-	'GitExtensions',
-	'Greenshot',
-	'JetBrains',
+	# 'aacs'
+	'Dropbox'
+	# 'dvdcss'
+	'FileZilla'
+	'GitExtensions'
+	'Greenshot'
+	'JetBrains'
+	'Microsoft/InputMethod'
+	'Microsoft/OneNote'
+	'Microsoft/VisualStudio'
+	'Microsoft\Windows\PowerShell'
 	'Microsoft\Windows\Start Menu\Programs\Startup'
 	'Microsoft\Windows\SendTo'
-	'Mozilla',
-	'MySQL/Workbench',
-	'StrokesPlus',
+	'Mozilla'
+	'MySQL/Workbench'
+	'StrokesPlus'
 	# http://mgzl.jp/2014/10/28/sync-sublime-text-3-over-dropbox/
-	'Sublime Text 3',
-	'Thunderbird',
+	'Sublime Text 3'
+	'Thunderbird'
 	'VirtuaWin'
 ) | % {$ENV:APPDATA + '/' + $_}
+$BackupDirectoryPaths += @(
+	# on %LOCALAPPDATA%
+	'Atlassian'
+	'Mendeley Ltd'
+) | % {$ENV:LOCALAPPDATA + '/' + $_}
 
 Export-ModuleMember -Variable *

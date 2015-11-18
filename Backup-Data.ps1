@@ -8,9 +8,13 @@
 # -> 一度モジュールを読み込んだセッションでモジュールファイルを変更して読み込み直す
 Import-Module $PSScriptRoot/Configurations.psm1 -PassThru -Verbose -Force
 Import-Module $PSScriptRoot/Remove-InvalidFileNameChars.psm1 `
-    -PassThru -Verbose -Force
 
+# TODO test
+# http://www.powershellmagazine.com/2013/05/13/pstip-detecting-if-the-console-is-in-interactive-mode/
+[Environment]::GetCommandLineArgs()
+# if interactive, $PSScriptRootだめ
 
+Exit-PSSession
 # TODO: Post-Install.ps1のように Backup-Directory と Backup-File をまとめる
 function Backup-Directory
 {
@@ -42,6 +46,12 @@ function Backup-Directory
 			"b"
 		)
 	#>
+
+    $resp = Read-Host $('Overrides ' + $BackupRoot + ' !!')
+    If ($resp -ne 'yes') {
+        Write-Host $('Aborted {0}.' -f $MyInvocation.MyCommand)
+        return
+    }
 
 	New-Item -ItemType Directory $HOME/Documents/Windows-Post-Install_log/
 
