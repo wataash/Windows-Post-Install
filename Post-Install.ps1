@@ -1,6 +1,7 @@
 ﻿<#
 TODO
 install office
+user nameが変わった場合に非対応
 
 App config after install
 disable: akamai… (w/ autocad), autodesk…, callnote.exe, Java…, LINE,
