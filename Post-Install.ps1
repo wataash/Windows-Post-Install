@@ -124,7 +124,7 @@ Function Restore-Data
                          '/Documents/Windows-Post-Install_log/robocopy_' + 
                          $LogPath + '.log')
             # R:0 skip locked resource. Check log.
-            ROBOCOPY $src $dp /MIR /R:0 > $LogPath
+            ROBOCOPY $src $dp /E /R:0 > $LogPath
             If ($?) {
                 Write-Output $('ROBOCOPYied ' + $dp)
             }
