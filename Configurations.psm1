@@ -2,7 +2,7 @@
 # Configurations.psm1
 #
 
-$BackupRoot = 'D:/2015-11-18_edge14'
+$BackupRoot = 'D:/path_to_backup_root'
 
 $BackupFilePaths = @()
 $BackupFilePaths += @(
