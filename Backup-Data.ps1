@@ -186,6 +186,8 @@ $BackupDirectoriesOnAppdata = @(
 	'GitExtensions',
 	'Greenshot',
 	'JetBrains',
+	'Microsoft\Windows\Start Menu\Programs\Startup'
+	'Microsoft\Windows\SendTo'
 	'Mozilla',
 	'MySQL/Workbench',
 	'StrokesPlus',
