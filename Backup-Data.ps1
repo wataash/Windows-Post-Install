@@ -134,3 +134,5 @@ function Get-InstalledSoftwares
 
 Backup-File -BackupRoot $BackupRoot -Paths $BackupFilePaths
 Backup-Directory -BackupRoot $BackupRoot -Paths $BackupDirectoryPaths
+	'Microsoft\Windows\Start Menu\Programs\Startup'
+	'Microsoft\Windows\SendTo'
