@@ -160,7 +160,7 @@ function Install-App
     # sort http://www.online-utility.org/text/sort.jsp
    
     # 必須
-    choco install -y 7zip.install adobereader altdrag autohotkey_l conemu cygwin dropbox firefox git gitextensions google-chrome-x64 googlejapaneseinput kdiff3 linkshellextension pdfcreator picasa scite4autohotkey sourcetree SublimeText3 sudo thunderbird vlc
+    choco install -y 7zip.install adobereader altdrag autohotkey_l conemu cygwin dropbox firefox git gitextensions google-chrome-x64 googlejapaneseinput javaruntime kdiff3 linkshellextension pdfcreator picasa scite4autohotkey sourcetree SublimeText3 sudo thunderbird vlc
     # 試す
     # choco install -y Console2 fiddler4 lessmsi procexp tortoisegit
     # HDDに余裕あればインストール
