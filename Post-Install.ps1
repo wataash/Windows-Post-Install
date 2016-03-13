@@ -1,4 +1,4 @@
-﻿<#
+<#
 TODO
 install office
 
@@ -49,7 +49,10 @@ Function Set-InitialConfiguration
         Choose drive encryption method and cipher strength, Enabled, AES256bit
     Right click C drive, turn on bitlocker
 
+    restart.
+
     Change the computer name.
+    log in with microsoft account.
     Restart after execute Set-Tweaks.
     githubからこのrepoをzipで落とす。ISEにこのファイルをドラッグして開いて実行。
     or PSの方がハイライトがあって見やすい。
@@ -160,6 +163,7 @@ function Install-App
    
     # 必須
     choco install -y 7zip.install adobereader altdrag autohotkey_l conemu cygwin dropbox firefox git gitextensions google-chrome-x64 googlejapaneseinput kdiff3 linkshellextension pdfcreator picasa scite4autohotkey sourcetree SublimeText3 sudo thunderbird vlc
+    # TODO flash
     # 試す
     # choco install -y Console2 fiddler4 lessmsi procexp tortoisegit
     # HDDに余裕あればインストール
@@ -188,24 +192,12 @@ function Install-App
     callnote synergy tincam CPU モニター
     Python
     http://conda.pydata.org/miniconda.html
-        2 x86をhome/Miniconda_x86にインストール
-        3 x86をhome/Miniconda3_x86にインストール・「デフォルト 3.4」チェックを外す
-        Miniconda x64 3.4をhome/Miniconda3にインストール
-            最後に入れたものが環境変数の先頭に来ると思われる
-    conda install -y ipython-notebook matplotlib
-        Miniconda3 x64にのみインストールされるっぽい
-    pip install pyvisa
-        Miniconda3 x64のみか？
     Heavy
     Visual studio https://www.visualstudio.com/ja-jp/downloads/downloadvisualstudio-vs.aspx
       PTVS intellisense
     autocad
     Sandboxie http://www.sandboxie.com/index.php?DownloadSandboxie
       default box -> block internet
-    Mathematica
-    rewrite: ver 10
-    &( $( $HOME+ '\Documents\apps\apps_utokyo_lab\ver901_lab\ver901_l\Mathematica_9.0.1_Japanese_WIN_LabVersion.exe' )) /norestart /silent |
-       Out-Null
     #>
 }
 
