@@ -1,4 +1,4 @@
 # Windows-Post-Install
 
-Backup data and configurations in Windows and restore them after installing new Windows.
-I don't expect this code to be used by others, so I use Japanese in code.
+Backups data and configurations in Windows, and restores them after new Windows installed.
+I don't expect this code to be used by others.  Some comments is written in Japanese.
