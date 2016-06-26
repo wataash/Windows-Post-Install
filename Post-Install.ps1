@@ -1,4 +1,4 @@
-﻿<#
+<#
 TODO
 install office
 user nameが変わった場合に非対応
@@ -41,7 +41,10 @@ Function Set-InitialConfiguration
         Choose drive encryption method and cipher strength, Enabled, AES256bit
     Right click C drive, turn on bitlocker
 
+    restart.
+
     Change the computer name.
+    log in with microsoft account.
     Restart after execute Set-Tweaks.
     githubからこのrepoをzipで落とす。ISEにこのファイルをドラッグして開いて実行。
     or PSの方がハイライトがあって見やすい。
@@ -152,6 +155,7 @@ function Install-App
    
     # 必須
     choco install -y 7zip.install adobereader altdrag autohotkey_l conemu cygwin dropbox firefox git gitextensions google-chrome-x64 googlejapaneseinput javaruntime kdiff3 linkshellextension pdfcreator picasa scite4autohotkey sourcetree SublimeText3 sudo thunderbird vlc
+    # TODO flash
     # 試す
     # choco install -y Console2 fiddler4 lessmsi procexp tortoisegit
     # HDDに余裕あればインストール
@@ -183,6 +187,7 @@ function Install-App
     
     Python (miniconda x64 3.5)
     http://conda.pydata.org/miniconda.html
+
     # TODO migrate
     conda install -y ipython-notebook matplotlib numpy django
     pip install pyvisa
@@ -192,10 +197,6 @@ function Install-App
     autocad
     Sandboxie http://www.sandboxie.com/index.php?DownloadSandboxie
       default box -> block internet
-    Mathematica
-    rewrite: ver 10
-    &( $( $HOME+ '\Documents\apps\apps_utokyo_lab\ver901_lab\ver901_l\Mathematica_9.0.1_Japanese_WIN_LabVersion.exe' )) /norestart /silent |
-       Out-Null
     #>
 }
 
