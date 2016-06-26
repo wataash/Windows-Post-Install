@@ -9,15 +9,6 @@ disable: akamai… (w/ autocad), autodesk…, callnote.exe, Java…, LINE,
 startup: altdrag
 Thunderbird mailnews.wraplength 65000
 
-cygwin: 他のスクリプトに移す。
-https://github.com/transcode-open/apt-cyg
-lynx -source rawgit.com/transcode-open/apt-cyg/master/apt-cyg > apt-cyg
-install apt-cyg /bin
-apt-cyg install wget
-apt-cyg install ip openssh autossh rsync zsh
-
-
-
 Windows 10 セットアップ画面で全パーティション消去、unallocated spaceにインストール
 ASUS：左のUSBポートだとエラー (we couldn't wait create a partition...)
       右だといけた
