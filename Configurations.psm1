@@ -13,9 +13,6 @@ $BackupFilePaths += @(
 	'.kdiff3rc'
 	'.python_history'
 	'contestapplet.conf'
-	'Untitled.ipynb'  # temporary
-	'Untitled1.ipynb'  # temporary
-	'Untitled2.ipynb'  # temporary
 	'Appdata/Roaming/ConEmu.xml'
 ) | % {$HOME + '\' + $_}
 
@@ -24,17 +21,16 @@ $BackupDirectoryPaths = @(
 	'!*?fasInvalid directory name'
 	'C:\NotExistDirectoryName'
 	'C:\Sandbox'
-	# 2015/11/16 C:/cygwin64/home がcygwin rootになった
-	'C:\tools\cygwin\home'
+	# 'C:\tools\cygwin\home'
+    'C:\cygwin64\home'
 )
 $BackupDirectoryPaths += @(
 	# on home directory
 	'.gnucash'
-	'.PyCharm50'
 	'Desktop'
 	'Documents'
 	'Downloads'
-	'Dropbox'  # オプション
+	# 'Dropbox'
 	'Music'
 	'Pictures'
 	'Videos'
@@ -44,13 +40,10 @@ $BackupDirectoryPaths += @(
 $BackupDirectoryPaths += @(
 	# on %APPDATA%
 	# 'aacs'
-	'Dropbox'
+	# 'Dropbox'
 	# 'dvdcss'
 	'FileZilla'
-	'GitExtensions'
 	'Greenshot'
-	'JetBrains'
-	'Microsoft/InputMethod'
 	'Microsoft/OneNote'
 	'Microsoft/VisualStudio'
 	'Microsoft\Windows\PowerShell'
@@ -58,11 +51,9 @@ $BackupDirectoryPaths += @(
 	'Microsoft\Windows\SendTo'
 	'Mozilla'
 	'MySQL/Workbench'
-	'StrokesPlus'
 	# http://mgzl.jp/2014/10/28/sync-sublime-text-3-over-dropbox/
 	'Sublime Text 3'
 	'Thunderbird'
-	'VirtuaWin'
 ) | % {$ENV:APPDATA + '/' + $_}
 $BackupDirectoryPaths += @(
 	# on %LOCALAPPDATA%

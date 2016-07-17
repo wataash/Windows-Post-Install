@@ -6,15 +6,11 @@
 # http://tech.guitarrapc.com/entry/2013/12/03/014013
 # -> 5. モジュールの破棄と再読み込み
 # -> 一度モジュールを読み込んだセッションでモジュールファイルを変更して読み込み直す
+# TODO: $PSScriptRoot is empty in interactive mode.
+# For now, replace $PSScriptRoot with C:\cygwin64\home\wsh\git\Windows-Post-Install
 Import-Module $PSScriptRoot/Configurations.psm1 -PassThru -Verbose -Force
-Import-Module $PSScriptRoot/Remove-InvalidFileNameChars.psm1 `
+Import-Module $PSScriptRoot/Remove-InvalidFileNameChars.psm1
 
-# TODO test
-# http://www.powershellmagazine.com/2013/05/13/pstip-detecting-if-the-console-is-in-interactive-mode/
-[Environment]::GetCommandLineArgs()
-# if interactive, $PSScriptRootだめ
-
-Exit-PSSession
 # TODO: Post-Install.ps1のように Backup-Directory と Backup-File をまとめる
 function Backup-Directory
 {
